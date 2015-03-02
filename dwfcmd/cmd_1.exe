@@ -1,0 +1,1 @@
+dwfcmd connect debug=2 pause=2 ai single freq=100000 channel=1 enable=1 range=2 samples=5000 start finish save=ao.txt

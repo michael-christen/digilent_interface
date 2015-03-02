@@ -1,2 +1,5 @@
 *.o
+test.cpp
+ao.txt
+test
 run
