@@ -79,8 +79,15 @@ void getInfo(HDWF * pDevice) {
 
 
 void configure(HDWF * pDevice, int channel, int * bufSize) {
+
 	int genIntVal;
 	HDWF device = *pDevice;
+
+	//Autoconfigure (configures after every set if true)
+	FDwfDeviceAutoConfigureSet(device, FALSE);
+	BOOL genBool;
+	FDwfDeviceAutoConfigureGet(device, &genBool);
+	printf("Autonfigure: %d\n",genBool);
 
 	//Reset all AnalogIn Instruments
 	FDwfAnalogInReset(device);
@@ -192,25 +199,32 @@ void run(HDWF * pDevice, int channel, int bufSize) {
 
 }
 
+void resetDevice(HDWF device) {
+	//Resets entire device
+	FDwfDeviceReset(device);
+}
+
+void closeAllDevices() {
+	FDwfDeviceCloseAll();
+}
+
 int main(int argc, char *argv[]) {
+	int channel = 0, bufSize;
 	
 	HDWF * pDevice = getDevice();
 	HDWF device = *pDevice;
 
-	//Resets entire device
-	FDwfDeviceReset(device);
+	resetDevice(device);
 
-	//Autoconfigure (configures after every set if true)
-	FDwfDeviceAutoConfigureSet(device, FALSE);
-	BOOL genBool;
-	FDwfDeviceAutoConfigureGet(device, &genBool);
-	printf("Autonfigure: %d\n",genBool);
-
+	//Main Stuff
+	//Get main device info
 	getInfo(pDevice);
-	int channel = 0, bufSize;
+	//Set measurements: instruments to use and instrument parameters
 	configure(pDevice, channel, &bufSize);
+	//Get measurements
 	run(pDevice, channel, bufSize);
 
-	FDwfDeviceCloseAll();
+	//Clean up
+	closeAllDevices();
 	return 0;
 }
